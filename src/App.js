@@ -1,5 +1,6 @@
 import React, { useState, useEffect, createContext } from "react";
 import axios from "axios";
+import Container from "react-bootstrap/Container";
 
 import {
   DonationSummary,
@@ -33,13 +34,15 @@ const App = () => {
   }, []);
 
   return (
-    <DonationsContext.Provider value={{ donations, setDonations }}>
-      <ProjectsContext.Provider value={{ projects, setProjects }}>
-        <DonationSummary />
-        <PlannedProjects />
-        <CompletedProjects />
-      </ProjectsContext.Provider>
-    </DonationsContext.Provider>
+    <Container>
+      <DonationsContext.Provider value={{ donations, setDonations }}>
+        <ProjectsContext.Provider value={{ projects, setProjects }}>
+          <DonationSummary />
+          <PlannedProjects />
+          <CompletedProjects />
+        </ProjectsContext.Provider>
+      </DonationsContext.Provider>
+    </Container>
   );
 };
 

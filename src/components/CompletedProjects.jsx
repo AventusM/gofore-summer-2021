@@ -1,6 +1,14 @@
 import React, { useContext, Fragment } from "react";
 import { DonationsContext, ProjectsContext } from "../App";
 
+import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Table from "react-bootstrap/Table";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import DropDown from "react-bootstrap/Dropdown";
+import DropDownButton from "react-bootstrap/DropdownButton";
+
 const CompletedProjects = () => {
   const { projects } = useContext(ProjectsContext);
   const { donations } = useContext(DonationsContext);
@@ -20,32 +28,37 @@ const CompletedProjects = () => {
   };
 
   return (
-    <div style={{ border: "1px solid violet" }}>
-      <p>Toteutetut projektit:</p>
-      <table>
+    <div>
+      <h4>Toteutetut projektit</h4>
+      <Table responsive striped bordered hover>
         <thead>
           <tr>
             <th style={{ textAlign: "left" }}>Nimi</th>
-            <th>Käytetty</th>
+            <th style={{ textAlign: "right" }}>Käytetty (€)</th>
           </tr>
         </thead>
         <tbody>
           {getCompletedProjects().length === 0 ? (
             <tr>
-              <td>(ei vielä yhtään toteutettua projektia)</td>
+              <td style={{ textAlign: "left" }}>
+                (ei vielä yhtään toteutettua projektia)
+              </td>
+              <td style={{ textAlign: "right" }}>-</td>
             </tr>
           ) : (
             <Fragment>
               {getCompletedProjects().map((completedProject) => (
                 <tr key={completedProject.id}>
-                  <td>{completedProject.name}</td>
-                  <td>{getFundingAmount(completedProject.id)}</td>
+                  <td style={{ textAlign: "left" }}>{completedProject.name}</td>
+                  <td style={{ textAlign: "right" }}>
+                    {getFundingAmount(completedProject.id)}
+                  </td>
                 </tr>
               ))}
             </Fragment>
           )}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };

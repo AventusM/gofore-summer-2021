@@ -1,15 +1,22 @@
 import React, { useState, useContext, useEffect } from "react";
-import { ProjectsContext, DonationsContext } from "../App";
 
-const DEFAULT_INDEX = 0;
-const EMPTY_ARRAY = [];
+import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Table from "react-bootstrap/Table";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import DropDown from "react-bootstrap/Dropdown";
+import DropDownButton from "react-bootstrap/DropdownButton";
+
+import { ProjectsContext, DonationsContext } from "../App";
+import { DEFAULT_FUNDS_INDEX, EMPTY_ARRAY } from "../constants";
 
 const PlannedProjects = () => {
   const { projects, setProjects } = useContext(ProjectsContext);
   const { donations, setDonations } = useContext(DonationsContext);
 
   const [availableFunds, setAvailableFunds] = useState(EMPTY_ARRAY);
-  const [currentDonation, setCurrentDonation] = useState(DEFAULT_INDEX);
+  const [currentDonation, setCurrentDonation] = useState(DEFAULT_FUNDS_INDEX);
 
   // Update the options whenever the list of donations gets changed
   useEffect(() => {
@@ -55,7 +62,7 @@ const PlannedProjects = () => {
       })
     );
 
-    setCurrentDonation(DEFAULT_INDEX); // Cover out of bounds situation by simply reseting to first available option
+    setCurrentDonation(DEFAULT_FUNDS_INDEX); // Cover out of bounds situation by simply reseting to first available option
   };
 
   const removePendingFunds = (projectId) => {
@@ -114,15 +121,15 @@ const PlannedProjects = () => {
   };
 
   return (
-    <div>
-      <h3>Suunnitellut projektit</h3>
-      <table>
+    <div style={{ marginBottom: "35px" }}>
+      <h4>Suunnitellut projektit</h4>
+      <Table responsive striped bordered hover>
         <thead>
           <tr>
             <th style={{ textAlign: "left" }}>Nimi</th>
-            <th>Tavoite</th>
-            <th>Kohdennettu</th>
-            <th></th>
+            <th style={{ textAlign: "right" }}>Tavoite (€)</th>
+            <th style={{ textAlign: "right" }}>Kohdennettu (€)</th>
+            <th style={{ textAlign: "center" }}>Toiminnot</th>
           </tr>
         </thead>
         <tbody>
@@ -136,6 +143,7 @@ const PlannedProjects = () => {
               <PlannedProjectFundingActions
                 projectId={project.id}
                 availableFunds={availableFunds}
+                currentDonation={currentDonation}
                 setCurrentDonation={setCurrentDonation}
                 addAvailableFunds={addAvailableFunds}
                 removePendingFunds={removePendingFunds}
@@ -144,7 +152,7 @@ const PlannedProjects = () => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };
@@ -152,6 +160,7 @@ const PlannedProjects = () => {
 const PlannedProjectFundingActions = (props) => {
   const {
     projectId,
+    currentDonation,
     setCurrentDonation,
     availableFunds,
     addAvailableFunds,
@@ -159,27 +168,63 @@ const PlannedProjectFundingActions = (props) => {
     completeProject,
   } = props;
 
-  const handleOptionChange = (event) => {
-    setCurrentDonation(Number(event.target.value));
+  const handleOptionChange = (eventKey) => {
+    setCurrentDonation(Number(eventKey));
   };
 
   return (
     <td>
-      <select onChange={handleOptionChange}>
-        {availableFunds.map((availableDonation, index) => (
-          <option key={index} value={index}>
-            {availableDonation.donor}, {availableDonation.sum}€
-          </option>
-        ))}
-      </select>
-      <button
-        onClick={() => addAvailableFunds(projectId)}
-        disabled={availableFunds.length === 0}
-      >
-        Lisää
-      </button>
-      <button onClick={() => removePendingFunds(projectId)}>Peruuta</button>
-      <button onClick={() => completeProject(projectId)}>Toteuta</button>
+      <Row>
+        <Col>
+          <DropDownButton
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onSelect={handleOptionChange}
+            size="sm"
+            title={
+              availableFunds.length > 0
+                ? `${availableFunds[currentDonation].donor}, ${availableFunds[currentDonation].sum}€`
+                : "Ei dataa"
+            }
+            variant="info"
+          >
+            {availableFunds.map((availableDonation, index) => (
+              <DropDown.Item key={index} eventKey={index}>
+                {availableDonation.donor}, {availableDonation.sum}€
+              </DropDown.Item>
+            ))}
+          </DropDownButton>
+        </Col>
+        <Col>
+          <ButtonGroup
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+            size="sm"
+          >
+            <Button
+              variant="link"
+              onClick={() => addAvailableFunds(projectId)}
+              disabled={availableFunds.length === 0}
+            >
+              Lisää
+            </Button>
+            <Button
+              variant="link"
+              onClick={() => removePendingFunds(projectId)}
+            >
+              Peruuta
+            </Button>
+            <Button variant="link" onClick={() => completeProject(projectId)}>
+              Toteuta
+            </Button>
+          </ButtonGroup>
+        </Col>
+      </Row>
     </td>
   );
 };
