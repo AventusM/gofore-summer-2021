@@ -25,8 +25,12 @@ const DonationSummary = () => {
 
   return (
     <div style={{ marginBottom: "35px" }}>
-      <h1>Lahjoitukset yhteensä: {`${getTotalDonations()}`}€</h1>
-      <h4>Kohdentamattomat varat: {`${getAvailableFunds()}`}€</h4>
+      <h1>
+        Lahjoitukset yhteensä: <b>{`${getTotalDonations()}`}</b>€
+      </h1>
+      <h4>
+        Kohdentamattomat varat: <b>{`${getAvailableFunds()}`}</b>€
+      </h4>
     </div>
   );
 };

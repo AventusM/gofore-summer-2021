@@ -1,13 +1,7 @@
 import React, { useContext, Fragment } from "react";
 import { DonationsContext, ProjectsContext } from "../App";
 
-import Button from "react-bootstrap/Button";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Table from "react-bootstrap/Table";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import DropDown from "react-bootstrap/Dropdown";
-import DropDownButton from "react-bootstrap/DropdownButton";
 
 const CompletedProjects = () => {
   const { projects } = useContext(ProjectsContext);
@@ -30,7 +24,7 @@ const CompletedProjects = () => {
   return (
     <div>
       <h4>Toteutetut projektit</h4>
-      <Table responsive striped bordered hover>
+      <Table size="sm" responsive striped bordered hover>
         <thead>
           <tr>
             <th style={{ textAlign: "left" }}>Nimi</th>

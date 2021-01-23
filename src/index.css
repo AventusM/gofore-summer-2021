@@ -17,10 +17,11 @@ p {
   padding: 0;
 }
 
-.hoverableTableRow span {
-  visibility: hidden;
-}
-
-.hoverableTableRow:hover span {
-  visibility: visible;
+@media (min-width: 720px) {
+  .hoverableTableRowSelect span {
+    visibility: hidden;
+  }
+  .hoverableTableRowSelect:hover span {
+    visibility: visible;
+  }
 }

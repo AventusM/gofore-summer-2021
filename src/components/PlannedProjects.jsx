@@ -123,7 +123,7 @@ const PlannedProjects = () => {
   return (
     <div style={{ marginBottom: "35px" }}>
       <h4>Suunnitellut projektit</h4>
-      <Table responsive striped bordered hover>
+      <Table size="sm" responsive striped bordered hover>
         <thead>
           <tr>
             <th style={{ textAlign: "left" }}>Nimi</th>
@@ -173,53 +173,61 @@ const PlannedProjectFundingActions = (props) => {
   };
 
   return (
-    <td>
+    <td className="hoverableTableRowSelect">
       <Row>
         <Col>
-          <DropDownButton
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onSelect={handleOptionChange}
-            size="sm"
-            title={
-              availableFunds.length > 0
-                ? `${availableFunds[currentDonation].donor}, ${availableFunds[currentDonation].sum}€`
-                : "Ei dataa"
-            }
-            variant="info"
-          >
-            {availableFunds.map((availableDonation, index) => (
-              <DropDown.Item key={index} eventKey={index}>
-                {availableDonation.donor}, {availableDonation.sum}€
-              </DropDown.Item>
-            ))}
-          </DropDownButton>
+          <span>
+            <DropDownButton
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onSelect={handleOptionChange}
+              size="sm"
+              title={
+                availableFunds.length > 0
+                  ? `${availableFunds[currentDonation].donor}, ${availableFunds[currentDonation].sum}€`
+                  : "Ei dataa"
+              }
+              variant="info"
+            >
+              {availableFunds.map((availableDonation, index) => (
+                <DropDown.Item key={index} eventKey={index}>
+                  {availableDonation.donor}, {availableDonation.sum}€
+                </DropDown.Item>
+              ))}
+            </DropDownButton>
+          </span>
         </Col>
         <Col>
           <ButtonGroup
             style={{
               display: "flex",
-              alignItems: "center",
+              justifyContent: "center",
             }}
-            size="sm"
           >
             <Button
+              size="sm"
               variant="link"
               onClick={() => addAvailableFunds(projectId)}
               disabled={availableFunds.length === 0}
             >
               Lisää
             </Button>
+
             <Button
+              size="sm"
               variant="link"
               onClick={() => removePendingFunds(projectId)}
             >
               Peruuta
             </Button>
-            <Button variant="link" onClick={() => completeProject(projectId)}>
+            <Button
+              size="sm"
+              variant="link"
+              onClick={() => completeProject(projectId)}
+            >
               Toteuta
             </Button>
           </ButtonGroup>
