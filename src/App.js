@@ -6,6 +6,7 @@ import {
   DonationSummary,
   PlannedProjects,
   CompletedProjects,
+  NotificationMessage,
 } from "./components";
 
 import { DONATIONS_URL, PROJECTS_URL } from "./constants";
@@ -13,6 +14,7 @@ import { DONATIONS_URL, PROJECTS_URL } from "./constants";
 const App = () => {
   const [projects, setProjects] = useState([]);
   const [donations, setDonations] = useState([]);
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     try {
@@ -35,19 +37,23 @@ const App = () => {
 
   return (
     <Container>
-      <DonationsContext.Provider value={{ donations, setDonations }}>
-        <ProjectsContext.Provider value={{ projects, setProjects }}>
-          <DonationSummary />
-          <PlannedProjects />
-          <CompletedProjects />
-        </ProjectsContext.Provider>
-      </DonationsContext.Provider>
+      <NotificationContext.Provider value={{ message, setMessage }}>
+        <DonationsContext.Provider value={{ donations, setDonations }}>
+          <ProjectsContext.Provider value={{ projects, setProjects }}>
+            <NotificationMessage />
+            <DonationSummary />
+            <PlannedProjects />
+            <CompletedProjects />
+          </ProjectsContext.Provider>
+        </DonationsContext.Provider>
+      </NotificationContext.Provider>
     </Container>
   );
 };
 
 const DonationsContext = createContext(null);
 const ProjectsContext = createContext(null);
+const NotificationContext = createContext(null);
 
-export { DonationsContext, ProjectsContext };
+export { DonationsContext, ProjectsContext, NotificationContext };
 export default App;

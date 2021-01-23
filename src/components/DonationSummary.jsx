@@ -1,6 +1,8 @@
 import React, { useEffect, useContext } from "react";
 import { DonationsContext } from "../App";
 
+import { formatEurAmount } from "../utils";
+
 const DonationSummary = () => {
   const { donations } = useContext(DonationsContext);
 
@@ -26,10 +28,12 @@ const DonationSummary = () => {
   return (
     <div style={{ marginBottom: "35px" }}>
       <h1>
-        Lahjoitukset yhteensä: <b>{`${getTotalDonations()}`}</b>€
+        Lahjoitukset yhteensä:{" "}
+        <b>{`${formatEurAmount(getTotalDonations())}`}</b>€
       </h1>
       <h4>
-        Kohdentamattomat varat: <b>{`${getAvailableFunds()}`}</b>€
+        Kohdentamattomat varat:{" "}
+        <b>{`${formatEurAmount(getAvailableFunds())}`}</b>€
       </h4>
     </div>
   );

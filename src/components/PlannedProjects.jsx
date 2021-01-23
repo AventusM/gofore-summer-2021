@@ -8,13 +8,20 @@ import Col from "react-bootstrap/Col";
 import DropDown from "react-bootstrap/Dropdown";
 import DropDownButton from "react-bootstrap/DropdownButton";
 
-import { ProjectsContext, DonationsContext } from "../App";
-import { DEFAULT_FUNDS_INDEX, EMPTY_ARRAY } from "../constants";
+import { ProjectsContext, DonationsContext, NotificationContext } from "../App";
+import {
+  DANGER_MESSAGE_PREFIX,
+  DEFAULT_FUNDS_INDEX,
+  EMPTY_ARRAY,
+  NOTIFICATION_MESSAGE_DURATION_FIVE_SECONDS,
+  SUCCESS_MESSAGE_PREFIX,
+} from "../constants";
 import { formatEurAmount } from "../utils";
 
 const PlannedProjects = () => {
   const { projects, setProjects } = useContext(ProjectsContext);
   const { donations, setDonations } = useContext(DonationsContext);
+  const { setMessage } = useContext(NotificationContext);
 
   const [availableFunds, setAvailableFunds] = useState(EMPTY_ARRAY);
   const [currentDonation, setCurrentDonation] = useState(DEFAULT_FUNDS_INDEX);
@@ -42,26 +49,35 @@ const PlannedProjects = () => {
     return projects.filter((project) => !project.completed);
   };
 
+  const createNotification = (type, message) => {
+    setMessage(`${type}:${message}`);
+    setTimeout(() => {
+      setMessage(null);
+    }, NOTIFICATION_MESSAGE_DURATION_FIVE_SECONDS);
+  };
+
   // This solution works, assuming that 1 donor has 1 type of sum
   // TODO: EDGE CASE FIX
   // TODO: Bypassing disabled button will crash the app. Maybe add an additional check here for available funds length >= 0?
   const addAvailableFunds = (projectId) => {
-    const getAvailableFundByIndex = availableFunds.find(
+    const availableFundByIndex = availableFunds.find(
       (_, index) => index === currentDonation
     );
 
-    setDonations(
-      donations.map((donation) => {
-        if (
-          donation.donor === getAvailableFundByIndex.donor &&
-          donation.sum === getAvailableFundByIndex.sum
-        ) {
-          return { ...donation, target: projectId, fundingPending: true };
-        } else {
-          return donation;
-        }
-      })
-    );
+    if (availableFundByIndex) {
+      setDonations(
+        donations.map((donation) => {
+          if (
+            donation.donor === availableFundByIndex.donor &&
+            donation.sum === availableFundByIndex.sum
+          ) {
+            return { ...donation, target: projectId, fundingPending: true };
+          } else {
+            return donation;
+          }
+        })
+      );
+    }
 
     setCurrentDonation(DEFAULT_FUNDS_INDEX); // Cover out of bounds situation by simply reseting to first available option
   };
@@ -115,9 +131,16 @@ const PlannedProjects = () => {
           }
         })
       );
+
+      createNotification(
+        SUCCESS_MESSAGE_PREFIX,
+        "Projekti toteutettu onnistuneesti!"
+      );
     } else {
-      console.log("NOOOO");
-      // TODO: Display error notification notification?
+      createNotification(
+        DANGER_MESSAGE_PREFIX,
+        "Projektin toteutus ei onnistunut rahoituspuutteen vuoksi"
+      );
     }
   };
 
