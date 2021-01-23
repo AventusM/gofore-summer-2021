@@ -10,6 +10,7 @@ import DropDownButton from "react-bootstrap/DropdownButton";
 
 import { ProjectsContext, DonationsContext } from "../App";
 import { DEFAULT_FUNDS_INDEX, EMPTY_ARRAY } from "../constants";
+import { formatEurAmount } from "../utils";
 
 const PlannedProjects = () => {
   const { projects, setProjects } = useContext(ProjectsContext);
@@ -129,16 +130,20 @@ const PlannedProjects = () => {
             <th style={{ textAlign: "left" }}>Nimi</th>
             <th style={{ textAlign: "right" }}>Tavoite (€)</th>
             <th style={{ textAlign: "right" }}>Kohdennettu (€)</th>
-            <th style={{ textAlign: "center" }}>Toiminnot</th>
+            <th style={{ textAlign: "right", paddingRight: "16px" }}>
+              Toiminnot
+            </th>
           </tr>
         </thead>
         <tbody>
           {getPendingProjects().map((project) => (
             <tr key={project.id}>
               <td>{project.name}</td>
-              <td style={{ textAlign: "right" }}>{project.target}</td>
               <td style={{ textAlign: "right" }}>
-                {getTargetedDonations(project.id)}
+                {formatEurAmount(project.target)}
+              </td>
+              <td style={{ textAlign: "right" }}>
+                {formatEurAmount(getTargetedDonations(project.id))}
               </td>
               <PlannedProjectFundingActions
                 projectId={project.id}

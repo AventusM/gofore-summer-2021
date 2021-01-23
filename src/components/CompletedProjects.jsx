@@ -1,7 +1,8 @@
 import React, { useContext, Fragment } from "react";
-import { DonationsContext, ProjectsContext } from "../App";
-
 import Table from "react-bootstrap/Table";
+
+import { DonationsContext, ProjectsContext } from "../App";
+import { formatEurAmount } from "../utils";
 
 const CompletedProjects = () => {
   const { projects } = useContext(ProjectsContext);
@@ -45,7 +46,7 @@ const CompletedProjects = () => {
                 <tr key={completedProject.id}>
                   <td style={{ textAlign: "left" }}>{completedProject.name}</td>
                   <td style={{ textAlign: "right" }}>
-                    {getFundingAmount(completedProject.id)}
+                    {formatEurAmount(getFundingAmount(completedProject.id))}
                   </td>
                 </tr>
               ))}
