@@ -1,11 +1,11 @@
 import React, { useEffect, useContext } from "react";
-import { DonationsContext } from "../App";
-
-import { formatEurAmount } from "../utils";
+import { DonationsContext } from "../../App";
+import { AvailableFunds, TotalDonations } from "./";
 
 const DonationSummary = () => {
   const { donations } = useContext(DonationsContext);
 
+  // Update the available funds after allocation changes in the add/cancel/remove table
   useEffect(() => {
     getAvailableFunds();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -27,14 +27,8 @@ const DonationSummary = () => {
 
   return (
     <div style={{ marginBottom: "35px" }}>
-      <h1>
-        Lahjoitukset yhteensä:{" "}
-        <b>{`${formatEurAmount(getTotalDonations())}`}</b>€
-      </h1>
-      <h4>
-        Kohdentamattomat varat:{" "}
-        <b>{`${formatEurAmount(getAvailableFunds())}`}</b>€
-      </h4>
+      <TotalDonations getTotalDonations={getTotalDonations} />
+      <AvailableFunds getAvailableFunds={getAvailableFunds} />
     </div>
   );
 };

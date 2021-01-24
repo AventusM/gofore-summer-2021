@@ -1,22 +1,20 @@
 import React, { useState, useContext, useEffect } from "react";
-
-import Button from "react-bootstrap/Button";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Table from "react-bootstrap/Table";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import DropDown from "react-bootstrap/Dropdown";
-import DropDownButton from "react-bootstrap/DropdownButton";
 
-import { ProjectsContext, DonationsContext, NotificationContext } from "../App";
+import { PlannedProjectsTableHeader, PlannedProjectsTableBody } from "./";
+
+import {
+  ProjectsContext,
+  DonationsContext,
+  NotificationContext,
+} from "../../App";
 import {
   DANGER_MESSAGE_PREFIX,
   DEFAULT_FUNDS_INDEX,
   EMPTY_ARRAY,
   NOTIFICATION_MESSAGE_DURATION_FIVE_SECONDS,
   SUCCESS_MESSAGE_PREFIX,
-} from "../constants";
-import { formatEurAmount } from "../utils";
+} from "../../constants";
 
 const PlannedProjects = () => {
   const { projects, setProjects } = useContext(ProjectsContext);
@@ -95,8 +93,6 @@ const PlannedProjects = () => {
     );
   };
 
-  // TODO: CHECK IF FUNDING TRESHOLD IS BEING MET
-  // TODO: MAP TO started:true etc.
   const completeProject = (projectId) => {
     const projectFundingTotal = donations.reduce(
       (accumulator, currentDonation) => {
@@ -148,120 +144,19 @@ const PlannedProjects = () => {
     <div style={{ marginBottom: "35px" }}>
       <h4>Suunnitellut projektit</h4>
       <Table size="sm" responsive striped bordered hover>
-        <thead>
-          <tr>
-            <th style={{ textAlign: "left" }}>Nimi</th>
-            <th style={{ textAlign: "right" }}>Tavoite (€)</th>
-            <th style={{ textAlign: "right" }}>Kohdennettu (€)</th>
-            <th style={{ textAlign: "right", paddingRight: "16px" }}>
-              Toiminnot
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {getPendingProjects().map((project) => (
-            <tr key={project.id}>
-              <td>{project.name}</td>
-              <td style={{ textAlign: "right" }}>
-                {formatEurAmount(project.target)}
-              </td>
-              <td style={{ textAlign: "right" }}>
-                {formatEurAmount(getTargetedDonations(project.id))}
-              </td>
-              <PlannedProjectFundingActions
-                projectId={project.id}
-                availableFunds={availableFunds}
-                currentDonation={currentDonation}
-                setCurrentDonation={setCurrentDonation}
-                addAvailableFunds={addAvailableFunds}
-                removePendingFunds={removePendingFunds}
-                completeProject={completeProject}
-              />
-            </tr>
-          ))}
-        </tbody>
+        <PlannedProjectsTableHeader />
+        <PlannedProjectsTableBody
+          getPendingProjects={getPendingProjects}
+          getTargetedDonations={getTargetedDonations}
+          availableFunds={availableFunds}
+          currentDonation={currentDonation}
+          setCurrentDonation={setCurrentDonation}
+          addAvailableFunds={addAvailableFunds}
+          removePendingFunds={removePendingFunds}
+          completeProject={completeProject}
+        />
       </Table>
     </div>
-  );
-};
-
-const PlannedProjectFundingActions = (props) => {
-  const {
-    projectId,
-    currentDonation,
-    setCurrentDonation,
-    availableFunds,
-    addAvailableFunds,
-    removePendingFunds,
-    completeProject,
-  } = props;
-
-  const handleOptionChange = (eventKey) => {
-    setCurrentDonation(Number(eventKey));
-  };
-
-  return (
-    <td className="hoverableTableRowSelect">
-      <Row>
-        <Col>
-          <span>
-            <DropDownButton
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              onSelect={handleOptionChange}
-              size="sm"
-              title={
-                availableFunds.length > 0
-                  ? `${availableFunds[currentDonation].donor}, ${availableFunds[currentDonation].sum}€`
-                  : "Ei dataa"
-              }
-              variant="info"
-            >
-              {availableFunds.map((availableDonation, index) => (
-                <DropDown.Item key={index} eventKey={index}>
-                  {availableDonation.donor}, {availableDonation.sum}€
-                </DropDown.Item>
-              ))}
-            </DropDownButton>
-          </span>
-        </Col>
-        <Col>
-          <ButtonGroup
-            style={{
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              size="sm"
-              variant="link"
-              onClick={() => addAvailableFunds(projectId)}
-              disabled={availableFunds.length === 0}
-            >
-              Lisää
-            </Button>
-
-            <Button
-              size="sm"
-              variant="link"
-              onClick={() => removePendingFunds(projectId)}
-            >
-              Peruuta
-            </Button>
-            <Button
-              size="sm"
-              variant="link"
-              onClick={() => completeProject(projectId)}
-            >
-              Toteuta
-            </Button>
-          </ButtonGroup>
-        </Col>
-      </Row>
-    </td>
   );
 };
 
