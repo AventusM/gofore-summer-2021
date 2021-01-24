@@ -8,7 +8,6 @@ const DonationSummary = () => {
   // Update the available funds after allocation changes in the add/cancel/remove table
   useEffect(() => {
     getAvailableFunds();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [donations]);
 
   const getTotalDonations = () => {

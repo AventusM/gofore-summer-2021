@@ -61,7 +61,6 @@ const PlannedProjectFundingActions = (props) => {
               size="sm"
               variant="link"
               onClick={() => addAvailableFunds(projectId)}
-              disabled={availableFunds.length === 0}
             >
               Lisää
             </Button>

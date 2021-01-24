@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import Alert from "react-bootstrap/Alert";
 
-import { NotificationContext } from "../App";
+import { NotificationContext } from "../../App";
 
 const NotificationMessage = () => {
   const { message } = useContext(NotificationContext);

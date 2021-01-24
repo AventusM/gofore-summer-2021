@@ -31,7 +31,6 @@ const PlannedProjects = () => {
     };
 
     setAvailableFunds(getFundsWithoutTarget());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [donations]);
 
   const getTargetedDonations = (projectId) => {
@@ -54,30 +53,32 @@ const PlannedProjects = () => {
     }, NOTIFICATION_MESSAGE_DURATION_FIVE_SECONDS);
   };
 
-  // This solution works, assuming that 1 donor has 1 type of sum
-  // TODO: EDGE CASE FIX
-  // TODO: Bypassing disabled button will crash the app. Maybe add an additional check here for available funds length >= 0?
   const addAvailableFunds = (projectId) => {
-    const availableFundByIndex = availableFunds.find(
-      (_, index) => index === currentDonation
-    );
-
-    if (availableFundByIndex) {
-      setDonations(
-        donations.map((donation) => {
-          if (
-            donation.donor === availableFundByIndex.donor &&
-            donation.sum === availableFundByIndex.sum
-          ) {
-            return { ...donation, target: projectId, fundingPending: true };
-          } else {
-            return donation;
-          }
-        })
+    if (availableFunds.length > 0) {
+      const availableFundByIndex = availableFunds.find(
+        (_, index) => index === currentDonation
       );
-    }
 
-    setCurrentDonation(DEFAULT_FUNDS_INDEX); // Cover out of bounds situation by simply reseting to first available option
+      if (availableFundByIndex) {
+        setDonations(
+          donations.map((donation) => {
+            if (
+              donation.donor === availableFundByIndex.donor &&
+              donation.sum === availableFundByIndex.sum &&
+              donation.id === availableFundByIndex.id // Allow 1 donor to have 1 sum multiple times
+            ) {
+              return { ...donation, target: projectId, fundingPending: true };
+            } else {
+              return donation;
+            }
+          })
+        );
+      }
+
+      setCurrentDonation(DEFAULT_FUNDS_INDEX); // Cover out of bounds situation by simply reseting to first available option
+    } else {
+      createNotification(DANGER_MESSAGE_PREFIX, "Valitse lahjoitettava summa");
+    }
   };
 
   const removePendingFunds = (projectId) => {
@@ -109,6 +110,7 @@ const PlannedProjects = () => {
     if (projectFundingTotal >= foundProject.target) {
       setDonations(
         donations.map((donation) => {
+          // eslint-disable-next-line no-unused-vars
           const { fundingPending, ...rest } = donation;
           if (donation.id === projectId) {
             return { ...rest }; // Remove now redundant pendingDonation flag
@@ -141,7 +143,7 @@ const PlannedProjects = () => {
   };
 
   return (
-    <div style={{ marginBottom: "35px" }}>
+    <div style={{ marginBottom: "35px", overFlowX: "auto" }}>
       <h4>Suunnitellut projektit</h4>
       <Table size="sm" responsive striped bordered hover>
         <PlannedProjectsTableHeader />

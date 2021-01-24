@@ -1,4 +1,5 @@
 import React, { useState, useEffect, createContext } from "react";
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import Container from "react-bootstrap/Container";
 
@@ -9,7 +10,11 @@ import {
   NotificationMessage,
 } from "./components";
 
-import { DONATIONS_URL, PROJECTS_URL } from "./constants";
+import {
+  DONATIONS_URL,
+  NOTIFICATION_MESSAGE_DURATION_FIVE_SECONDS,
+  PROJECTS_URL,
+} from "./constants";
 
 const App = () => {
   const [projects, setProjects] = useState([]);
@@ -25,13 +30,20 @@ const App = () => {
 
       const fetchDonationData = async () => {
         const response = await axios.get(DONATIONS_URL);
-        setDonations(response.data);
+        const mappedResponse = response.data.map((donation) => ({
+          ...donation,
+          id: uuidv4(), // Cover the potential edge case so that 1 donor can have 1 sum multiple times
+        }));
+        setDonations(mappedResponse);
       };
 
       fetchProjectData();
       fetchDonationData();
     } catch (error) {
-      console.log("Error while fetching data", error.message);
+      setMessage(error.message);
+      setTimeout(() => {
+        setMessage(null);
+      }, NOTIFICATION_MESSAGE_DURATION_FIVE_SECONDS);
     }
   }, []);
 
